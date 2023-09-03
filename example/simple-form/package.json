@@ -1,0 +1,17 @@
+{
+  "name": "simple-web",
+  "version": "1.0.1",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node-esm src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "class-forms": "^1.0.18",
+    "ts-node": "^10.9.1"
+  }
+}
