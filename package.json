@@ -1,0 +1,7 @@
+{
+  "name": "class-forms-workspace",
+  "workspaces": [
+    "example/*",
+    "class-forms"
+  ]
+}
