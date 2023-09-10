@@ -27,12 +27,12 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: "build"
-          path: "dist"
+          path: "class-forms/dist"
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
           name: "docs"
-          path: "docs"
+          path: "class-forms/docs"
 
   release:
     name: Release
@@ -63,7 +63,7 @@ jobs:
         run: npm ci --ignore-scripts
       - uses: actions/download-artifact@v3
         with:
-          path: artifacts
+          path: class-forms/artifacts
       - name: Move artifacts
         run: |
           mv artifacts/build dist/
@@ -86,7 +86,7 @@ jobs:
         uses: actions/upload-pages-artifact@v2
         with:
           name: pages-docs
-          path: docs
+          path: class-forms/docs
       - name: Deploy docs to GitHub Pages
         if: steps.set-npm-url.outputs.npm-url != ''
         uses: actions/deploy-pages@v2
