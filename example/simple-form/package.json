@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "class-forms": "^0.0.0",
+    "class-forms": "*",
     "ts-node": "^10.9.1"
   },
   "description": ""
