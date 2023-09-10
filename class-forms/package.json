@@ -21,7 +21,7 @@
     "generate-docs": "typedoc --plugin typedoc-plugin-missing-exports",
     "build": "tsc --build tsconfig.json --force",
     "build:prod": "tsc --build tsconfig.prod.json --force",
-    "prepack": "npm run build:prod"
+    "prepack": "npm run build:prod && cp ../README.md ./README.md"
   },
   "keywords": [
     "express",
