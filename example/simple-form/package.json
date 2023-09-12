@@ -11,6 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "class-forms": "*",
+    "import-meta-resolve": "^3.0.0",
+    "rsuite": "^5.40.0",
     "ts-node": "^10.9.1"
   },
   "description": ""

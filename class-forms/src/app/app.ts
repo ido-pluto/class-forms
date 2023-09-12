@@ -1,5 +1,5 @@
 import express from 'express';
-import {routes} from './register.js';
+import {files, routes} from './register.js';
 import {EvalPage} from './eval-page.js';
 
 export type ClassFormsAppOptions = {
@@ -11,6 +11,12 @@ export default class ClassFormsApp {
     }
 
     public async init() {
+        // init static files
+        this.app.use((req, res, next) => {
+            files[req.path] ? res.sendFile(files[req.path]) : next();
+        });
+
+        // init routes
         for (const [route, cls] of Object.entries(routes)) {
             this.app.all(route, async (req, res, next) => {
                 const evalPage = new EvalPage(req, res, next, cls as any);

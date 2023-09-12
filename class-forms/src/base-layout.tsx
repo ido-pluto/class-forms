@@ -8,12 +8,16 @@ import morgan from 'morgan';
 import formidable, {File} from 'formidable';
 import z, {ZodError} from 'zod';
 import fs from 'fs-extra';
-import React from 'react';
+import React, {ReactElement} from 'react';
 import {generateErrorMessage} from 'zod-error';
 import helmet, {HelmetOptions} from 'helmet';
 import formsBodyParser from './middleware/forms-body-parser.js';
 import csrfMiddleware, {CsrfMiddlewareOptions} from './middleware/csrf-middleware.js';
 import ReflectFormData, {ReflectFormDataOptions} from './render/reflect-form-data.js';
+import stringHash from 'string-hash';
+import {files} from './app/register.js';
+import {resolve} from 'import-meta-resolve';
+import {fileURLToPath} from 'url';
 
 export type DefaultExtendedRequest = { [key: string]: any }
 export type DefaultExtendedResponse = { [key: string]: any }
@@ -83,6 +87,8 @@ export default abstract class BaseLayout<T = DefaultExtendedRequest, K = Default
     protected reflectFormData: ReflectFormDataOptions | false = {noReflectByDefault: true};
     private _activeUseMiddleware?: UseMiddlewareCallback<T, K>;
 
+    private pageMeta: { style: ReactElement[], script: ReactElement[] } = {style: [], script: []};
+
     public constructor(protected req: FormFrameworkRequest<T>, protected res: FormFrameworkResponse<K>) {
     }
 
@@ -137,6 +143,8 @@ export default abstract class BaseLayout<T = DefaultExtendedRequest, K = Default
             <meta charSet="utf-8"/>
             <meta name="viewport" content="width=device-width, initial-scale=1"/>
             {children.head}
+            {this.pageMeta.script}
+            {this.pageMeta.style}
         </head>
         <body>
         <form method="post" encType={encType} id="root">
@@ -229,5 +237,23 @@ export default abstract class BaseLayout<T = DefaultExtendedRequest, K = Default
                 next();
             }
         });
+    }
+
+    protected importStyle(fullPath: string, parent: string, options?: HTMLLinkElement) {
+        fullPath = fileURLToPath(resolve(fullPath, parent));
+        const href = `/${stringHash(fullPath)}.css`;
+        this.pageMeta.style.push(
+            <link rel="stylesheet" href={href} {...options}/>
+        );
+        files[href] = fullPath;
+    }
+
+    protected importScript(fullPath: string, parent: string, options: HTMLScriptElement = {type: 'module'}) {
+        fullPath = fileURLToPath(resolve(fullPath, parent));
+        const src = `/${stringHash(fullPath)}.js`;
+        this.pageMeta.script.push(
+            <script src={src} {...options}></script>
+        );
+        files[src] = fullPath;
     }
 }

@@ -7,6 +7,8 @@ export type ReflectFormDataOptions = {
 }
 
 const DO_REFLECT = 'data-reflect';
+const DEFAULT_ON_CLICK = () => {
+};
 
 export default class ReflectFormData {
     private _indexBodyArray: { [key: string]: number } = {};
@@ -31,6 +33,7 @@ export default class ReflectFormData {
         }
 
         this._reflectDataDefaultValue(value);
+        value.props.onChange ??= DEFAULT_ON_CLICK;
         delete value.props[DO_REFLECT];
         delete value.props.defaultValue;
 

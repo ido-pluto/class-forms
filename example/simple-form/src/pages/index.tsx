@@ -1,14 +1,17 @@
 import {BaseLayout, DefaultExtendedRequest, DefaultExtendedResponse, registerPage, UseMiddlewareCallback} from 'class-forms';
 import React from 'react';
+import {Button} from 'rsuite';
 
 class IndexPage extends BaseLayout {
     static override path = '/';
     showMessage = '';
 
-    override useMiddleware(use: UseMiddlewareCallback<DefaultExtendedRequest, DefaultExtendedResponse>) {
+    override async useMiddleware(use: UseMiddlewareCallback<DefaultExtendedRequest, DefaultExtendedResponse>) {
         super.useMiddleware(use);
 
         this.connectClick(this.buttonClicked);
+
+        this.importStyle('rsuite/dist/rsuite.min.css', import.meta.url);
     }
 
     async buttonClicked() {
@@ -31,6 +34,7 @@ class IndexPage extends BaseLayout {
                 <p>click count: {this.req.session!.counter}</p>
 
                 {this.error && <p style={{color: 'red'}}>{this.error}</p>}
+                <Button appearance="primary">Hi</Button>
 
                 <input type="text" name="showText" placeholder="Add text" autoFocus data-reflect={true}/>
                 <input type="checkbox" name="checkThis" data-reflect={true}/>
