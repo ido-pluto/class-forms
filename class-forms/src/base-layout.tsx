@@ -16,7 +16,8 @@ import csrfMiddleware, {CsrfMiddlewareOptions} from './middleware/csrf-middlewar
 import ReflectFormData, {ReflectFormDataOptions} from './render/reflect-form-data.js';
 import stringHash from 'string-hash';
 import {files} from './app/register.js';
-import {findFileImport} from './utils/import-files.js';
+import {FILE_PROTOCOL, findFileImport} from './utils/import-files.js';
+import {fileURLToPath} from 'url';
 
 export type DefaultExtendedRequest = { [key: string]: any }
 export type DefaultExtendedResponse = { [key: string]: any }
@@ -239,20 +240,34 @@ export default abstract class BaseLayout<T = DefaultExtendedRequest, K = Default
     }
 
     protected importStyle(fullPath: string, parent = import.meta.url, options?: HTMLLinkElement) {
-        const url = findFileImport(fullPath, parent);
-        const href = `/${stringHash(url)}.css`;
+        const file = findFileImport(fullPath, parent);
+        if (file.protocol !== FILE_PROTOCOL) {
+            this.pageMeta.style.push(
+                <link rel="stylesheet" href={file.href} {...options}/>
+            );
+            return;
+        }
+
+        const href = `/${stringHash(file.href)}.css`;
         this.pageMeta.style.push(
             <link rel="stylesheet" href={href} {...options}/>
         );
-        files[href] = url;
+        files[href] = fileURLToPath(file);
     }
 
     protected importScript(fullPath: string, parent = import.meta.url, options: HTMLScriptElement = {type: 'module'}) {
-        const url = findFileImport(fullPath, parent);
-        const src = `/${stringHash(url)}.js`;
-        this.pageMeta.script.push(
-            <script src={src} {...options}></script>
+        const file = findFileImport(fullPath, parent);
+        if (file.protocol !== FILE_PROTOCOL) {
+            this.pageMeta.style.push(
+                <script src={file.href} {...options}></script>
+            );
+            return;
+        }
+
+        const href = `/${stringHash(file.href)}.css`;
+        this.pageMeta.style.push(
+            <script src={href} {...options}></script>
         );
-        files[src] = url;
+        files[href] = fileURLToPath(file);
     }
 }
