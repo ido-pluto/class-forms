@@ -16,8 +16,7 @@ import csrfMiddleware, {CsrfMiddlewareOptions} from './middleware/csrf-middlewar
 import ReflectFormData, {ReflectFormDataOptions} from './render/reflect-form-data.js';
 import stringHash from 'string-hash';
 import {files} from './app/register.js';
-import {resolve} from 'import-meta-resolve';
-import {fileURLToPath} from 'url';
+import {findFileImport} from './utils/import-files.js';
 
 export type DefaultExtendedRequest = { [key: string]: any }
 export type DefaultExtendedResponse = { [key: string]: any }
@@ -239,21 +238,21 @@ export default abstract class BaseLayout<T = DefaultExtendedRequest, K = Default
         });
     }
 
-    protected importStyle(fullPath: string, parent: string, options?: HTMLLinkElement) {
-        fullPath = fileURLToPath(resolve(fullPath, parent));
-        const href = `/${stringHash(fullPath)}.css`;
+    protected importStyle(fullPath: string, parent = import.meta.url, options?: HTMLLinkElement) {
+        const url = findFileImport(fullPath, parent);
+        const href = `/${stringHash(url)}.css`;
         this.pageMeta.style.push(
             <link rel="stylesheet" href={href} {...options}/>
         );
-        files[href] = fullPath;
+        files[href] = url;
     }
 
-    protected importScript(fullPath: string, parent: string, options: HTMLScriptElement = {type: 'module'}) {
-        fullPath = fileURLToPath(resolve(fullPath, parent));
-        const src = `/${stringHash(fullPath)}.js`;
+    protected importScript(fullPath: string, parent = import.meta.url, options: HTMLScriptElement = {type: 'module'}) {
+        const url = findFileImport(fullPath, parent);
+        const src = `/${stringHash(url)}.js`;
         this.pageMeta.script.push(
             <script src={src} {...options}></script>
         );
-        files[src] = fullPath;
+        files[src] = url;
     }
 }
